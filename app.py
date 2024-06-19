@@ -6,10 +6,7 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-api_key = 'AIzaSyCZFh7SJyEQexNtDpqQQwIZubYYMyNdB6Q'
-
-
-
+api_key = 'YOUR_API_KEY'
 
 def extract_youtube_video_comments(video_id):
     youtube = build('youtube', 'v3', developerKey=api_key)
@@ -27,18 +24,6 @@ def extract_youtube_video_comments(video_id):
                     comments.append(comment)
             except:
                 pass
-            # reply_count = item['snippet']['totalReplyCount']
-            # if reply_count > 0:
-            #     for reply in item['replies']['comments']:
-            #         reply_text = reply['snippet']['textDisplay']
-            #         try:
-            #             if detect(reply_text) == 'en':
-            #                 comments.append(reply_text)
-            #         except:
-            #             # Handle the exception (e.g., skip the comment)
-            #             pass
-                    # print(f"Comment: {comment}, Reply: {reply_text}\n")
-
         # Handle pagination
         if 'nextPageToken' in video_response:
             video_response = youtube.commentThreads().list(
@@ -60,15 +45,10 @@ def extract_video_id(youtube_link):
         return None
 
 def analyze_yt_comments(video_id):
-    # Enter the video ID
-    #'PCfiqY05BpA'
     comments = extract_youtube_video_comments(video_id)
-
     sentiment, positive, negative, neutral = analyze_sentiment(comments)
     print("Sentiment Analysis of the video comments:")
     avg_sentiment = sum(sentiment) / len(sentiment)
-
-    # Print overall review
     if avg_sentiment > 0:
         return "Positive", avg_sentiment, positive, negative, neutral
     elif avg_sentiment == 0:
@@ -92,12 +72,9 @@ def analyze_sentiment(comments):
 
 def extract_comments(soup):
     comments = []
-    # Find the HTML elements containing comments
     comment_elements = soup.find_all('div', class_='tutor-review-comment')
-
     for comment in comment_elements:
         comments.append(comment.text.strip())
-        # print(comment.text.strip())
     return comments
 
 app = Flask(__name__)
@@ -135,9 +112,9 @@ def yt_sentiment():
                 "positive": positive,
                 "negative": negative,
                 "neutral": neutral
-            })  # Return a JSON response if needed
+            })
         else:
-            return jsonify(error='No data provided'), 400  # Return an error response if data is missing
+            return jsonify(error='No data provided'), 400 
     else:
         return jsonify(error='Method not allowed'), 405
 
@@ -167,9 +144,9 @@ def st_sentiment():
                 "positive": positive,
                 "negative": negative,
                 "neutral": neutral
-            })  # Return a JSON response if needed
+            })
         else:
-            return jsonify(error='No data provided'), 400  # Return an error response if data is missing
+            return jsonify(error='No data provided'), 400 
     else:
         return jsonify(error='Method not allowed'), 405
 
